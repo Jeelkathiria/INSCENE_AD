@@ -1,0 +1,1730 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI In-Scene Advertising | Planar Ad Space Placement Analyzer</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            navy: {
+              950: '#070A12',
+              900: '#0C111D',
+              850: '#111726',
+              800: '#161F33',
+              700: '#222F4C'
+            },
+            accent: {
+              green: '#00E676',
+              cyan: '#00D2FF',
+              amber: '#FFB300',
+              rose: '#FF3366'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #070A12; }
+    .glass-panel { background: rgba(12, 17, 29, 0.85); backdrop-filter: blur(14px); border: 1px solid rgba(255, 255, 255, 0.08); }
+    .glow-green { box-shadow: 0 0 30px -5px rgba(0, 230, 118, 0.25); }
+    .glow-cyan { box-shadow: 0 0 30px -5px rgba(0, 210, 255, 0.25); }
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #070A12; }
+    ::-webkit-scrollbar-thumb { background: #222F4C; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #33446B; }
+  </style>
+</head>
+<body class="text-slate-100 min-h-screen flex flex-col antialiased selection:bg-accent-green selection:text-black">
+
+  <!-- Header -->
+  <header class="border-b border-slate-800/80 bg-navy-900/90 sticky top-0 z-50 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-accent-cyan to-accent-green flex items-center justify-center shadow-lg shadow-accent-green/20">
+          <i data-lucide="scan-search" class="w-5 h-5 text-black font-bold"></i>
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <h1 class="text-base sm:text-lg font-bold tracking-tight text-white">AI In-Scene Advertising</h1>
+            <span class="text-[11px] px-2 py-0.5 rounded-full font-mono bg-accent-green/10 text-accent-green border border-accent-green/30">Auto Placement Analyzer</span>
+          </div>
+          <p class="text-xs text-slate-400">Computer Vision • Planar Surface Tracking & Sequential Ad Timeline Allocation</p>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-3">
+        <!-- Presentation Workflow Explainer Trigger -->
+        <button onclick="openPipelineModal()" class="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-accent-cyan/10 text-accent-cyan border border-accent-cyan/30 hover:bg-accent-cyan/20 transition shadow-sm">
+          <i data-lucide="git-fork" class="w-3.5 h-3.5"></i>
+          <span>Pipeline Architecture Flow</span>
+        </button>
+
+        <div class="flex items-center space-x-2 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-lg text-emerald-400 text-xs font-medium">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span>Vision Pipeline Ready</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Body -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full flex flex-col space-y-6">
+
+    <!-- Sequential AI Pipeline Flow Banner ("One After Another Like Flow") -->
+    <section id="pipelineFlowSection" class="glass-panel rounded-2xl p-5 border border-slate-800 shadow-2xl relative overflow-hidden">
+      <!-- Glow ambient backdrops -->
+      <div class="absolute -top-20 -left-20 w-64 h-64 bg-accent-cyan/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -bottom-20 -right-20 w-64 h-64 bg-accent-green/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      <!-- Flow Header -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-800/80 gap-3">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-accent-cyan/20 to-accent-green/20 border border-accent-cyan/30 flex items-center justify-center text-accent-cyan shadow-inner">
+            <i data-lucide="cpu" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <div class="flex items-center space-x-2">
+              <h2 class="text-base sm:text-lg font-bold text-white tracking-tight">AI Pipeline Architecture Flow</h2>
+              <span class="text-[11px] px-2.5 py-0.5 rounded-full font-mono bg-accent-cyan/10 text-accent-cyan border border-accent-cyan/30 flex items-center space-x-1.5 shadow-sm">
+                <span class="w-1.5 h-1.5 rounded-full bg-accent-cyan animate-pulse"></span>
+                <span>Pipelined Parallel Streaming Architecture</span>
+              </span>
+            </div>
+            <p class="text-xs text-slate-400">Concurrent streaming engine: Frame Extraction Worker &amp; Neural Detection/OCR Engine execute in parallel without disk latency</p>
+          </div>
+        </div>
+
+        <div class="flex items-center space-x-3 self-end sm:self-center">
+          <div id="pipelineGlobalBadge" class="px-3 py-1.5 rounded-lg text-xs font-mono font-semibold bg-navy-900 border border-slate-700/80 flex items-center space-x-2 text-slate-300">
+            <span id="pipelineGlobalDot" class="w-2 h-2 rounded-full bg-slate-500"></span>
+            <span id="pipelineGlobalStatus">Pipeline Standby</span>
+          </div>
+          <button onclick="openPipelineModal()" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-accent-cyan/10 text-accent-cyan border border-accent-cyan/30 hover:bg-accent-cyan/20 transition flex items-center space-x-1.5 shadow-sm">
+            <i data-lucide="info" class="w-3.5 h-3.5"></i>
+            <span>Architecture Guide</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Concurrent Parallel Stream Core Indicator Strip -->
+      <div class="mt-4 px-3.5 py-1.5 rounded-lg bg-navy-950/80 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between text-xs font-mono text-slate-400 gap-2">
+        <div class="flex items-center space-x-2">
+          <span class="w-2 h-2 rounded-full bg-accent-cyan animate-pulse"></span>
+          <span class="font-bold text-slate-200">CONCURRENT PARALLEL WORKERS (Stages 02, 03, 04):</span>
+          <span class="text-accent-cyan font-semibold">Decoupled Producer-Consumer Concurrency</span>
+        </div>
+        <div class="text-[11px] text-slate-400">
+          <span>Frames decode into memory queue while Neural / OCR Quads &amp; Tracking execute concurrently</span>
+        </div>
+      </div>
+
+      <!-- 6 Sequential & Parallel Connected Stage Cards -->
+      <div class="mt-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 relative">
+        
+        <!-- Step 1: Media Ingestion & Demuxing -->
+        <div id="flowCard1" onclick="openStageModal(1)" class="p-3.5 rounded-xl border border-slate-800 bg-navy-900/80 transition-all duration-300 cursor-pointer hover:border-slate-600 flex flex-col justify-between relative group">
+          <div class="flex items-center justify-between mb-2">
+            <span id="flowNum1" class="w-5 h-5 rounded-md bg-slate-800 text-slate-400 font-mono font-bold text-[11px] flex items-center justify-center">01</span>
+            <span id="flowPill1" class="text-[9px] px-1.5 py-0.5 rounded font-mono font-bold uppercase tracking-wider bg-slate-800 text-slate-400 border border-slate-700">STANDBY</span>
+          </div>
+          <div class="flex items-center space-x-2 mb-2">
+            <div id="flowIconBox1" class="w-8 h-8 rounded-lg bg-slate-800/80 text-slate-400 flex items-center justify-center shrink-0">
+              <i id="flowIcon1" data-lucide="upload-cloud" class="w-4 h-4"></i>
+            </div>
+            <div class="truncate">
+              <div id="flowTitle1" class="text-xs font-bold text-slate-200 truncate">1. Ingestion</div>
+              <div class="text-[10px] text-slate-400 truncate">Demux &amp; Ring Buffer</div>
+            </div>
+          </div>
+          <div class="pt-2 border-t border-slate-800/60 flex items-center justify-between text-[10px] font-mono">
+            <span id="flowMeta1" class="text-slate-400 truncate">OpenCV H.264</span>
+            <i data-lucide="arrow-right" class="w-3 h-3 text-slate-600 hidden lg:block"></i>
+          </div>
+        </div>
+
+        <!-- Step 2: Adaptive Stride Frame Extraction Worker (Producer Thread) -->
+        <div id="flowCard2" onclick="openStageModal(2)" class="p-3.5 rounded-xl border border-slate-800 bg-navy-900/80 transition-all duration-300 cursor-pointer hover:border-slate-600 flex flex-col justify-between relative group">
+          <div class="flex items-center justify-between mb-2">
+            <span id="flowNum2" class="w-5 h-5 rounded-md bg-slate-800 text-slate-400 font-mono font-bold text-[11px] flex items-center justify-center">02</span>
+            <span id="flowPill2" class="text-[9px] px-1.5 py-0.5 rounded font-mono font-bold uppercase tracking-wider bg-cyan-950/80 text-cyan-400 border border-cyan-800">PRODUCER</span>
+          </div>
+          <div class="flex items-center space-x-2 mb-2">
+            <div id="flowIconBox2" class="w-8 h-8 rounded-lg bg-slate-800/80 text-slate-400 flex items-center justify-center shrink-0">
+              <i id="flowIcon2" data-lucide="film" class="w-4 h-4"></i>
+            </div>
+            <div class="truncate">
+              <div id="flowTitle2" class="text-xs font-bold text-slate-200 truncate">2. Frame Worker</div>
+              <div class="text-[10px] text-slate-400 truncate">Producer Stream Thread</div>
+            </div>
+          </div>
+          <div class="pt-2 border-t border-slate-800/60 flex items-center justify-between text-[10px] font-mono">
+            <span id="flowMeta2" class="text-slate-400 truncate">Prefetch Queue (Stride 3)</span>
+            <i data-lucide="arrow-right" class="w-3 h-3 text-slate-600 hidden lg:block"></i>
+          </div>
+        </div>
+
+        <!-- Step 3: Planar Surface & OCR Quad Detection (Consumer Engine) -->
+        <div id="flowCard3" onclick="openStageModal(3)" class="p-3.5 rounded-xl border border-slate-800 bg-navy-900/80 transition-all duration-300 cursor-pointer hover:border-slate-600 flex flex-col justify-between relative group">
+          <div class="flex items-center justify-between mb-2">
+            <span id="flowNum3" class="w-5 h-5 rounded-md bg-slate-800 text-slate-400 font-mono font-bold text-[11px] flex items-center justify-center">03</span>
+            <span id="flowPill3" class="text-[9px] px-1.5 py-0.5 rounded font-mono font-bold uppercase tracking-wider bg-purple-950/80 text-purple-400 border border-purple-800">CONSUMER</span>
+          </div>
+          <div class="flex items-center space-x-2 mb-2">
+            <div id="flowIconBox3" class="w-8 h-8 rounded-lg bg-slate-800/80 text-slate-400 flex items-center justify-center shrink-0">
+              <i id="flowIcon3" data-lucide="scan" class="w-4 h-4"></i>
+            </div>
+            <div class="truncate">
+              <div id="flowTitle3" class="text-xs font-bold text-slate-200 truncate">3. Neural/OCR Quads</div>
+              <div class="text-[10px] text-slate-400 truncate">Parallel Consumer Engine</div>
+            </div>
+          </div>
+          <div class="pt-2 border-t border-slate-800/60 flex items-center justify-between text-[10px] font-mono">
+            <span id="flowMeta3" class="text-slate-400 truncate">YOLOv8 + 3D Mesh</span>
+            <i data-lucide="arrow-right" class="w-3 h-3 text-slate-600 hidden lg:block"></i>
+          </div>
+        </div>
+
+        <!-- Step 4: Continuous Centroid Tracking & Occlusion Reasoning -->
+        <div id="flowCard4" onclick="openStageModal(4)" class="p-3.5 rounded-xl border border-slate-800 bg-navy-900/80 transition-all duration-300 cursor-pointer hover:border-slate-600 flex flex-col justify-between relative group">
+          <div class="flex items-center justify-between mb-2">
+            <span id="flowNum4" class="w-5 h-5 rounded-md bg-slate-800 text-slate-400 font-mono font-bold text-[11px] flex items-center justify-center">04</span>
+            <span id="flowPill4" class="text-[9px] px-1.5 py-0.5 rounded font-mono font-bold uppercase tracking-wider bg-purple-950/80 text-purple-400 border border-purple-800">CONSUMER</span>
+          </div>
+          <div class="flex items-center space-x-2 mb-2">
+            <div id="flowIconBox4" class="w-8 h-8 rounded-lg bg-slate-800/80 text-slate-400 flex items-center justify-center shrink-0">
+              <i id="flowIcon4" data-lucide="crosshair" class="w-4 h-4"></i>
+            </div>
+            <div class="truncate">
+              <div id="flowTitle4" class="text-xs font-bold text-slate-200 truncate">4. Spatial Tracker</div>
+              <div class="text-[10px] text-slate-400 truncate">Centroid IoU + Re-ID</div>
+            </div>
+          </div>
+          <div class="pt-2 border-t border-slate-800/60 flex items-center justify-between text-[10px] font-mono">
+            <span id="flowMeta4" class="text-slate-400 truncate">Coasting &amp; Masking</span>
+            <i data-lucide="arrow-right" class="w-3 h-3 text-slate-600 hidden lg:block"></i>
+          </div>
+        </div>
+
+        <!-- Step 5: Co-Spatial Consolidation & Disjoint Timeline Partitioning -->
+        <div id="flowCard5" onclick="openStageModal(5)" class="p-3.5 rounded-xl border border-slate-800 bg-navy-900/80 transition-all duration-300 cursor-pointer hover:border-slate-600 flex flex-col justify-between relative group">
+          <div class="flex items-center justify-between mb-2">
+            <span id="flowNum5" class="w-5 h-5 rounded-md bg-slate-800 text-slate-400 font-mono font-bold text-[11px] flex items-center justify-center">05</span>
+            <span id="flowPill5" class="text-[9px] px-1.5 py-0.5 rounded font-mono font-bold uppercase tracking-wider bg-amber-950/80 text-amber-400 border border-amber-800">OPTIMIZER</span>
+          </div>
+          <div class="flex items-center space-x-2 mb-2">
+            <div id="flowIconBox5" class="w-8 h-8 rounded-lg bg-slate-800/80 text-slate-400 flex items-center justify-center shrink-0">
+              <i id="flowIcon5" data-lucide="calendar-clock" class="w-4 h-4"></i>
+            </div>
+            <div class="truncate">
+              <div id="flowTitle5" class="text-xs font-bold text-slate-200 truncate">5. Consolidation</div>
+              <div class="text-[10px] text-slate-400 truncate">Co-Spatial Billboard Merge</div>
+            </div>
+          </div>
+          <div class="pt-2 border-t border-slate-800/60 flex items-center justify-between text-[10px] font-mono">
+            <span id="flowMeta5" class="text-slate-400 truncate">Disjoint Timeline Slots</span>
+            <i data-lucide="arrow-right" class="w-3 h-3 text-slate-600 hidden lg:block"></i>
+          </div>
+        </div>
+
+        <!-- Step 6: Ranked Ad Space & Selected Square Placement -->
+        <div id="flowCard6" onclick="openStageModal(6)" class="p-3.5 rounded-xl border border-slate-800 bg-navy-900/80 transition-all duration-300 cursor-pointer hover:border-slate-600 flex flex-col justify-between relative group">
+          <div class="flex items-center justify-between mb-2">
+            <span id="flowNum6" class="w-5 h-5 rounded-md bg-slate-800 text-slate-400 font-mono font-bold text-[11px] flex items-center justify-center">06</span>
+            <span id="flowPill6" class="text-[9px] px-1.5 py-0.5 rounded font-mono font-bold uppercase tracking-wider bg-emerald-950/80 text-emerald-400 border border-emerald-800">OUTPUT</span>
+          </div>
+          <div class="flex items-center space-x-2 mb-2">
+            <div id="flowIconBox6" class="w-8 h-8 rounded-lg bg-slate-800/80 text-slate-400 flex items-center justify-center shrink-0">
+              <i id="flowIcon6" data-lucide="sparkles" class="w-4 h-4"></i>
+            </div>
+            <div class="truncate">
+              <div id="flowTitle6" class="text-xs font-bold text-slate-200 truncate">6. Ad Placement</div>
+              <div class="text-[10px] text-slate-400 truncate">Rank #1 3D Target Square</div>
+            </div>
+          </div>
+          <div class="pt-2 border-t border-slate-800/60 flex items-center justify-between text-[10px] font-mono">
+            <span id="flowMeta6" class="text-slate-400 truncate">Neon Square Overlay</span>
+            <i data-lucide="check-circle" class="w-3 h-3 text-accent-green hidden lg:block"></i>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Quick Interactive Footnote -->
+      <div class="mt-3.5 pt-3 border-t border-slate-800/60 flex flex-col sm:flex-row sm:items-center justify-between text-xs text-slate-400 gap-2">
+        <div class="flex items-center space-x-2">
+          <i data-lucide="mouse-pointer-click" class="w-3.5 h-3.5 text-accent-cyan"></i>
+          <span>Click any stage card above to inspect deep technical algorithms, mathematical formulations &amp; output metrics</span>
+        </div>
+        <div class="flex items-center space-x-3 text-[11px] font-mono text-slate-400">
+          <span class="flex items-center space-x-1"><span class="w-2 h-2 rounded-full bg-slate-500 inline-block"></span><span>Standby</span></span>
+          <span class="flex items-center space-x-1"><span class="w-2 h-2 rounded-full bg-accent-cyan animate-pulse inline-block"></span><span>Active</span></span>
+          <span class="flex items-center space-x-1"><span class="w-2 h-2 rounded-full bg-accent-green inline-block"></span><span>Completed</span></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Upload Section -->
+    <section id="uploadSection" class="glass-panel rounded-2xl p-6 sm:p-8 border border-slate-800 shadow-2xl">
+      <div class="max-w-3xl mx-auto text-center flex flex-col items-center">
+        
+        <!-- Mode Switcher Tabs (Video vs Photo) -->
+        <div class="flex items-center justify-center mb-6">
+          <div class="inline-flex p-1 rounded-xl bg-navy-900 border border-slate-800 shadow-lg">
+            <button id="tabVideoMode" onclick="setAnalysisMode('video')" class="px-5 py-2 rounded-lg text-xs font-bold transition flex items-center space-x-2 bg-accent-green text-black shadow-md">
+              <i data-lucide="video" class="w-4 h-4"></i>
+              <span>Video Analysis</span>
+            </button>
+            <button id="tabPhotoMode" onclick="setAnalysisMode('photo')" class="px-5 py-2 rounded-lg text-xs font-bold transition flex items-center space-x-2 text-slate-400 hover:text-white">
+              <i data-lucide="image" class="w-4 h-4"></i>
+              <span>Photo Analysis</span>
+            </button>
+          </div>
+        </div>
+
+        <div id="modeIconBox" class="w-14 h-14 rounded-2xl bg-accent-cyan/10 border border-accent-cyan/20 flex items-center justify-center text-accent-cyan mb-3">
+          <i id="modeIcon" data-lucide="video" class="w-7 h-7"></i>
+        </div>
+        
+        <h2 id="modeTitle" class="text-xl font-bold text-white tracking-tight">Upload Video for In-Scene Ad Space Extraction</h2>
+        <p id="modeSubtitle" class="text-xs sm:text-sm text-slate-400 mt-1 mb-5">
+          Select or drop any video clip. The pipeline extracts frames in real-time, detects candidate planar surfaces, tracks them with homography, and partitions sequential ad slots across the timeline.
+        </p>
+
+        <!-- Dropzone Box -->
+        <div id="dropzone" 
+             onclick="triggerFileInput()"
+             class="w-full border-2 border-dashed border-slate-700 hover:border-accent-green/80 bg-navy-850/60 hover:bg-navy-850 rounded-2xl p-8 cursor-pointer transition flex flex-col items-center justify-center space-y-3 group">
+          <input type="file" id="mediaFileInput" class="hidden" accept="video/*" onchange="handleFileSelect(event)">
+          <div class="w-12 h-12 rounded-xl bg-slate-800 group-hover:bg-accent-green/20 flex items-center justify-center transition">
+            <i id="dropzoneIcon" data-lucide="upload-cloud" class="w-6 h-6 text-slate-400 group-hover:text-accent-green transition"></i>
+          </div>
+          <div class="text-center">
+            <span class="text-sm font-semibold text-slate-200 group-hover:text-accent-green transition">Click to browse</span>
+            <span id="dropzoneHint" class="text-xs text-slate-400"> or drag and drop your media file</span>
+            <p id="dropzoneFormats" class="text-[11px] text-slate-500 mt-1 font-mono">Supports MP4, MOV, AVI, MKV, WebM</p>
+          </div>
+        </div>
+
+        <!-- Selected File Preview & Analyze Button -->
+        <div id="selectedFileBar" class="hidden w-full mt-4 p-3 bg-navy-800 rounded-xl border border-slate-700 flex items-center justify-between">
+          <div class="flex items-center space-x-3 overflow-hidden text-left">
+            <i id="selectedFileIcon" data-lucide="file-video" class="w-5 h-5 text-accent-cyan shrink-0"></i>
+            <div class="truncate">
+              <div id="selectedFileName" class="text-xs font-semibold text-white truncate">filename.mp4</div>
+              <div id="selectedFileSize" class="text-[10px] text-slate-400 font-mono">0.0 MB</div>
+            </div>
+          </div>
+          <button id="btnStartAnalysis" onclick="startAnalysis()" class="px-5 py-2.5 rounded-xl text-xs font-bold bg-accent-green text-black hover:bg-emerald-400 transition flex items-center space-x-2 shadow-lg shadow-accent-green/20 shrink-0">
+            <i id="btnStartIcon" data-lucide="play" class="w-3.5 h-3.5 fill-current"></i>
+            <span id="btnStartText">Analyze Video</span>
+          </button>
+        </div>
+
+        <!-- Live Frame Extraction Progress HUD (Video Mode) -->
+        <div id="processingLoader" class="hidden w-full mt-6 p-6 bg-navy-850 rounded-2xl border border-accent-green/30 shadow-2xl flex flex-col space-y-5 glow-green">
+          <!-- Top Header with live pulse and timer -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 w-full border-b border-slate-800 pb-3">
+            <div class="flex items-center space-x-3 text-left">
+              <div class="w-10 h-10 rounded-xl bg-accent-green/10 border border-accent-green/30 flex items-center justify-center text-accent-green animate-pulse">
+                <i data-lucide="scan" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <h4 class="text-sm font-bold text-white flex items-center space-x-2">
+                  <span>Live Parallel Video Stream &amp; Neural / OCR Analysis</span>
+                  <span class="flex h-2.5 w-2.5 relative">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-cyan opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-accent-cyan"></span>
+                  </span>
+                </h4>
+                <p id="liveStatusText" class="text-xs text-slate-400 mt-0.5">Producer-Consumer Stream: Frame reader decodes into prefetch buffer while Neural / OCR Quads &amp; Tracker run concurrently in parallel...</p>
+              </div>
+            </div>
+
+            <!-- Live Elapsed Timer & Big Extraction Percentage -->
+            <div class="flex items-center space-x-4 self-end sm:self-center">
+              <div class="text-right">
+                <div id="liveElapsedTimer" class="text-lg font-bold font-mono text-accent-cyan">00:00.0s</div>
+                <span class="text-[10px] text-slate-400 font-mono uppercase tracking-wider block">Elapsed Time</span>
+              </div>
+              <div class="text-right border-l border-slate-800 pl-4">
+                <div id="livePercentVal" class="text-3xl font-extrabold font-mono text-accent-green tracking-tight">0.0%</div>
+                <span class="text-[10px] text-slate-400 font-mono uppercase tracking-wider block">Extracted</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Main extraction body: Left = Live Frame Visualizer, Right = Extraction Telemetry -->
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-center w-full">
+            <!-- Left: Live Frame Visualizer Preview -->
+            <div class="md:col-span-6 flex flex-col space-y-2">
+              <div class="relative bg-black rounded-xl overflow-hidden border border-slate-700/80 aspect-video flex items-center justify-center shadow-inner group">
+                <img id="liveFramePreview" class="w-full h-full object-contain" src="" alt="Live Video Frame Extraction Feed">
+                <div id="livePreviewPlaceholder" class="absolute inset-0 flex flex-col items-center justify-center bg-navy-950 text-slate-500 space-y-2">
+                  <i data-lucide="film" class="w-8 h-8 text-slate-600 animate-bounce"></i>
+                  <span class="text-xs font-mono">Initializing Video Stream...</span>
+                </div>
+                <!-- Live HUD Overlay on preview -->
+                <div class="absolute top-2 left-2 flex items-center space-x-1.5 px-2 py-0.5 rounded bg-black/75 backdrop-blur border border-red-500/40 text-[10px] font-mono text-red-400 font-bold uppercase">
+                  <span class="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
+                  <span>CV EXTRACTOR REC</span>
+                </div>
+                <div class="absolute bottom-2 right-2 px-2 py-0.5 rounded bg-black/75 backdrop-blur text-[10px] font-mono text-accent-green">
+                  <span id="livePreviewFrameNum">Frame #0</span>
+                </div>
+              </div>
+              <span class="text-[11px] text-slate-400 font-mono text-center">
+                Real-time frame extraction stream with planar quad & corner detection overlays
+              </span>
+            </div>
+
+            <!-- Right: Telemetry & Multi-Stage Stepper -->
+            <div class="md:col-span-6 flex flex-col space-y-3">
+              <!-- Animated Progress Bar -->
+              <div class="space-y-1">
+                <div class="flex justify-between text-xs font-mono text-slate-400">
+                  <span>Overall Extraction Progress</span>
+                  <span id="liveProgressFraction">0 / 0 frames</span>
+                </div>
+                <div class="w-full bg-slate-800/80 h-3 rounded-full overflow-hidden p-0.5 border border-slate-700/60 shadow-inner">
+                  <div id="liveProgressBar" class="h-full rounded-full bg-gradient-to-r from-accent-cyan via-emerald-400 to-accent-green transition-all duration-150 ease-out shadow-lg" style="width: 0%"></div>
+                </div>
+              </div>
+
+              <!-- Real-time metrics grid -->
+              <div class="grid grid-cols-2 gap-2 text-xs font-mono">
+                <div class="bg-navy-900/90 p-2.5 rounded-xl border border-slate-800">
+                  <span class="text-[10px] text-slate-500 uppercase block">Extraction Throughput</span>
+                  <span id="liveFpsVal" class="text-sm font-bold text-accent-cyan">0.0 FPS</span>
+                </div>
+                <div class="bg-navy-900/90 p-2.5 rounded-xl border border-slate-800">
+                  <span class="text-[10px] text-slate-500 uppercase block">Active Planar Surfaces</span>
+                  <span id="liveActiveSurfaces" class="text-sm font-bold text-accent-green">0 Detected</span>
+                </div>
+                <div class="bg-navy-900/90 p-2.5 rounded-xl border border-slate-800">
+                  <span class="text-[10px] text-slate-500 uppercase block">Video Playhead</span>
+                  <span id="liveTimestamp" class="text-sm font-bold text-slate-200">00:00.0s</span>
+                </div>
+                <div class="bg-navy-900/90 p-2.5 rounded-xl border border-slate-800">
+                  <span class="text-[10px] text-slate-500 uppercase block">Processing Status</span>
+                  <span class="text-sm font-bold text-emerald-400 flex items-center space-x-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span>Extracting...</span>
+                  </span>
+                </div>
+              </div>
+
+              <!-- Live Pipeline Stepper with Concurrent Parallel Workers Block -->
+              <div class="pt-2 border-t border-slate-800/80 text-[11px] font-mono space-y-1.5 text-slate-400">
+                <div id="liveStep1" class="flex items-center space-x-1.5 text-accent-green font-semibold">
+                  <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i>
+                  <span>1. Ingestion &amp; Codec Demuxing</span>
+                </div>
+                
+                <!-- Concurrent Streaming Workers Block -->
+                <div class="p-2 rounded-lg bg-navy-950/90 border border-accent-cyan/30 space-y-1.5 my-1">
+                  <div class="flex items-center justify-between text-[10px] text-accent-cyan font-bold pb-1 border-b border-slate-800">
+                    <span class="flex items-center space-x-1.5">
+                      <span class="w-2 h-2 rounded-full bg-accent-cyan animate-pulse"></span>
+                      <span>CONCURRENT STREAM WORKERS (Parallel Execution):</span>
+                    </span>
+                    <span class="px-1.5 py-0.2 rounded bg-accent-cyan/15 text-accent-cyan border border-accent-cyan/30 uppercase text-[9px]">Active</span>
+                  </div>
+                  <div id="liveStep2" class="flex items-center space-x-1.5 text-accent-cyan font-semibold">
+                    <i data-lucide="loader" class="w-3.5 h-3.5 animate-spin"></i>
+                    <span>Worker A: Frame Extraction Stream [Producer]</span>
+                  </div>
+                  <div id="liveStep3" class="flex items-center space-x-1.5 text-accent-cyan font-semibold">
+                    <i data-lucide="loader" class="w-3.5 h-3.5 animate-spin"></i>
+                    <span>Worker B: Neural &amp; OCR Surface Quads [Consumer]</span>
+                  </div>
+                  <div id="liveStep4" class="flex items-center space-x-1.5 text-accent-cyan font-semibold">
+                    <i data-lucide="loader" class="w-3.5 h-3.5 animate-spin"></i>
+                    <span>Worker C: Continuous Spatial Tracker [Consumer]</span>
+                  </div>
+                </div>
+
+                <div id="liveStep5" class="flex items-center space-x-1.5 text-slate-500">
+                  <i data-lucide="circle" class="w-3.5 h-3.5"></i>
+                  <span>5. Co-Spatial Tracklet Consolidation &amp; Disjoint Slots</span>
+                </div>
+                <div id="liveStep6" class="flex items-center space-x-1.5 text-slate-500">
+                  <i data-lucide="circle" class="w-3.5 h-3.5"></i>
+                  <span>6. Optimal 3D Ad Space Square Placement</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Photo Processing Loader -->
+        <div id="photoProcessingLoader" class="hidden w-full mt-6 p-6 sm:p-8 bg-navy-850 rounded-2xl border border-accent-cyan/30 shadow-2xl flex flex-col items-center space-y-4 glow-cyan">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-accent-cyan/10 border border-accent-cyan/30 flex items-center justify-center text-accent-cyan animate-pulse">
+              <i data-lucide="scan" class="w-5 h-5"></i>
+            </div>
+            <div class="text-left">
+              <h4 class="text-sm font-bold text-white flex items-center space-x-2">
+                <span>Analyzing Photo Planar Surfaces</span>
+                <span class="w-2 h-2 rounded-full bg-accent-cyan animate-ping"></span>
+              </h4>
+              <p class="text-xs text-slate-400 mt-0.5">Detecting candidate planar walls/billboards, computing quad corners & homography...</p>
+            </div>
+          </div>
+          <div class="w-full bg-slate-800/80 h-2.5 rounded-full overflow-hidden border border-slate-700/60">
+            <div class="h-full rounded-full bg-gradient-to-r from-accent-cyan to-accent-green animate-pulse w-full"></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Results Workspace (Hidden until media is processed) -->
+    <section id="resultsSection" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+      <!-- Left 8 Columns: Media Viewport & ScoreEngine Factor Breakdown -->
+      <div class="lg:col-span-8 flex flex-col space-y-6">
+
+        <!-- Viewport Card -->
+        <div class="glass-panel rounded-2xl overflow-hidden shadow-2xl flex flex-col">
+          <!-- Viewport Control Header -->
+          <div class="px-4 py-3 border-b border-slate-800 flex items-center justify-between bg-navy-900/60">
+            <div class="flex items-center space-x-2 truncate">
+              <i id="mediaTypeIcon" data-lucide="video" class="w-4 h-4 text-accent-cyan"></i>
+              <h3 id="currentMediaLabel" class="text-xs font-semibold text-slate-200 truncate">media_analyzed.mp4</h3>
+            </div>
+
+            <!-- View Toggle -->
+            <div class="flex items-center bg-slate-800/80 p-0.5 rounded-lg border border-slate-700/60 text-xs">
+              <button id="btnToggleAnnotated" onclick="switchMediaMode('annotated')" class="px-2.5 py-1 rounded-md font-semibold transition bg-accent-green text-black">
+                AI Overlay (Quads & HUD)
+              </button>
+              <button id="btnToggleRaw" onclick="switchMediaMode('raw')" class="px-2.5 py-1 rounded-md font-medium text-slate-400 hover:text-white transition">
+                Raw Media
+              </button>
+            </div>
+          </div>
+
+          <!-- Total Processing Time & Benchmark Strip -->
+          <div class="px-4 py-2.5 bg-navy-950/90 border-b border-slate-800 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono">
+            <div class="flex items-center space-x-2">
+              <i data-lucide="timer" class="w-4 h-4 text-accent-green shrink-0"></i>
+              <div>
+                <span class="text-[10px] text-slate-500 uppercase block">Total Processing Time</span>
+                <span id="statProcTime" class="text-sm font-bold text-accent-green">--</span>
+              </div>
+            </div>
+            <div class="flex items-center space-x-2">
+              <i data-lucide="zap" class="w-4 h-4 text-accent-cyan shrink-0"></i>
+              <div>
+                <span class="text-[10px] text-slate-500 uppercase block">Extraction Speed</span>
+                <span id="statProcFps" class="text-sm font-bold text-accent-cyan">-- FPS</span>
+              </div>
+            </div>
+            <div class="flex items-center space-x-2">
+              <i data-lucide="film" class="w-4 h-4 text-purple-400 shrink-0"></i>
+              <div>
+                <span class="text-[10px] text-slate-500 uppercase block">Frames Extracted</span>
+                <span id="statTotalFrames" class="text-sm font-bold text-white">--</span>
+              </div>
+            </div>
+            <div class="flex items-center space-x-2">
+              <i data-lucide="gauge" class="w-4 h-4 text-amber-400 shrink-0"></i>
+              <div>
+                <span class="text-[10px] text-slate-500 uppercase block">Performance Ratio</span>
+                <span id="statSpeedup" class="text-sm font-bold text-amber-300">--</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Selected Placement Square Banner -->
+          <div class="px-4 py-2 bg-emerald-950/40 border-b border-accent-green/20 flex items-center justify-between text-xs font-mono text-emerald-300">
+            <div class="flex items-center space-x-2">
+              <span class="w-2 h-2 rounded-full bg-accent-green animate-pulse"></span>
+              <span class="font-bold text-white">AD PLACEMENT AREA:</span>
+              <span class="text-accent-green">Selected Square Highlighted in Neon Green (P1 - P4)</span>
+            </div>
+            <span class="px-2 py-0.5 rounded bg-accent-green/10 text-accent-green text-[10px] uppercase font-bold border border-accent-green/30">Target Square Active</span>
+          </div>
+
+          <!-- Media Viewport (Video Player OR Photo Image) -->
+          <div class="relative bg-black aspect-video flex items-center justify-center overflow-hidden">
+            <!-- Video Player -->
+            <video id="resultsVideoPlayer" class="w-full h-full object-contain" controls autoplay loop playsinline>
+              <source id="resultsVideoSource" src="" type="video/mp4">
+              Your browser does not support video playback.
+            </video>
+
+            <!-- Photo Image Display -->
+            <img id="resultsPhotoPlayer" class="hidden w-full h-full object-contain" src="" alt="Analyzed Ad Placement Photo">
+          </div>
+
+          <!-- Diagnostic Footnote -->
+          <div class="px-4 py-2 bg-navy-900 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400 font-mono">
+            <div class="flex items-center space-x-3">
+              <span>Total Ad Spaces Detected: <strong id="statCount" class="text-accent-green">0</strong></span>
+            </div>
+            <button onclick="resetToUpload()" class="text-accent-cyan hover:underline text-xs flex items-center space-x-1">
+              <i data-lucide="rotate-ccw" class="w-3 h-3"></i>
+              <span id="btnUploadNewText">Upload New Media</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- ScoreEngine Live Factor Inspector -->
+        <div class="glass-panel rounded-2xl p-5 shadow-xl">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h3 class="text-sm font-bold text-white flex items-center space-x-2">
+                <i data-lucide="gauge" class="w-4 h-4 text-accent-green"></i>
+                <span>ScoreEngine Factor Inspector</span>
+              </h3>
+              <p class="text-xs text-slate-400 mt-0.5">Extracted metrics for the selected ad candidate</p>
+            </div>
+            <div id="inspectorBadge" class="px-3 py-1 rounded-full text-xs font-bold font-mono bg-accent-green/20 text-accent-green border border-accent-green/40">
+              Rank #1 (Optimal)
+            </div>
+          </div>
+
+          <!-- 5 Metrics Grid -->
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+            
+            <!-- Metric 1: Duration (Video) / Dimensions (Photo) -->
+            <div class="bg-navy-900 p-3 rounded-xl border border-slate-800">
+              <div class="flex items-center justify-between text-xs text-slate-400">
+                <span id="m1Label">⏱ Screen Time</span>
+                <span id="scoreDur" class="font-mono text-accent-cyan font-bold">--</span>
+              </div>
+              <div class="text-base font-bold text-white mt-1" id="rawDur">--s</div>
+              <div class="w-full bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
+                <div id="barDur" class="bg-accent-cyan h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+              </div>
+            </div>
+
+            <!-- Metric 2: Area -->
+            <div class="bg-navy-900 p-3 rounded-xl border border-slate-800">
+              <div class="flex items-center justify-between text-xs text-slate-400">
+                <span>📐 Canvas Area</span>
+                <span id="scoreArea" class="font-mono text-emerald-400 font-bold">--</span>
+              </div>
+              <div class="text-base font-bold text-white mt-1" id="rawArea">--%</div>
+              <div class="w-full bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
+                <div id="barArea" class="bg-emerald-400 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+              </div>
+            </div>
+
+            <!-- Metric 3: Occlusion -->
+            <div class="bg-navy-900 p-3 rounded-xl border border-slate-800">
+              <div class="flex items-center justify-between text-xs text-slate-400">
+                <span>🛡 Occlusion</span>
+                <span id="scoreOcc" class="font-mono text-accent-amber font-bold">--</span>
+              </div>
+              <div class="text-base font-bold text-white mt-1" id="rawOcc">--%</div>
+              <div class="w-full bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
+                <div id="barOcc" class="bg-accent-amber h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+              </div>
+            </div>
+
+            <!-- Metric 4: Stability (Video) / Position (Photo) -->
+            <div class="bg-navy-900 p-3 rounded-xl border border-slate-800">
+              <div class="flex items-center justify-between text-xs text-slate-400">
+                <span id="m4Label">📈 Stability</span>
+                <span id="scoreStab" class="font-mono text-purple-400 font-bold">--</span>
+              </div>
+              <div class="text-base font-bold text-white mt-1 truncate" id="rawStab">--px</div>
+              <div class="w-full bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
+                <div id="barStab" class="bg-purple-400 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+              </div>
+            </div>
+
+            <!-- Metric 5: Geometry -->
+            <div class="bg-navy-900 p-3 rounded-xl border border-slate-800">
+              <div class="flex items-center justify-between text-xs text-slate-400">
+                <span>🎯 Ortho/Geom</span>
+                <span id="scoreGeom" class="font-mono text-rose-400 font-bold">--</span>
+              </div>
+              <div class="text-base font-bold text-white mt-1" id="rawGeom">--°</div>
+              <div class="w-full bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
+                <div id="barGeom" class="bg-rose-400 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Composite Summary Banner -->
+          <div class="mt-4 p-4 rounded-xl bg-navy-900 border border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div class="flex items-center space-x-3">
+              <div class="w-12 h-12 rounded-xl bg-accent-green/10 border border-accent-green/30 flex items-center justify-center shrink-0">
+                <span id="scoreBanner" class="text-xl font-bold font-mono text-accent-green">--</span>
+              </div>
+              <div>
+                <div class="text-[11px] uppercase tracking-wider font-semibold text-slate-400">Composite Ad Placement Fitness Score</div>
+                <div id="auditText" class="text-xs text-slate-200 mt-0.5">Evaluation notes will appear here.</div>
+              </div>
+            </div>
+
+            <div class="flex items-center space-x-2 shrink-0">
+              <a id="btnCsv" href="#" target="_blank" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center space-x-1.5">
+                <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5 text-accent-cyan"></i>
+                <span>CSV</span>
+              </a>
+              <a id="btnJson" href="#" target="_blank" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center space-x-1.5">
+                <i data-lucide="code" class="w-3.5 h-3.5 text-accent-green"></i>
+                <span>JSON</span>
+              </a>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Right 4 Columns: Top Candidate Ad Spaces Leaderboard -->
+      <div class="lg:col-span-4 flex flex-col space-y-4">
+        
+        <div class="glass-panel rounded-2xl p-5 shadow-xl flex-1 flex flex-col">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div class="flex items-center space-x-2">
+              <i data-lucide="award" class="w-5 h-5 text-accent-amber"></i>
+              <h3 class="text-sm font-bold text-white">Extracted Ad Spaces</h3>
+            </div>
+            <span id="badgeCandidateCount" class="text-xs px-2 py-0.5 rounded-full font-mono bg-slate-800 text-slate-300">
+              0 Placements
+            </span>
+          </div>
+
+          <p id="candidateHelpText" class="text-xs text-slate-400 my-2">Click any candidate below to inspect details:</p>
+
+          <!-- Master Timelines / Placements Summary Box -->
+          <div id="timelineSummaryCard" class="my-2 p-3.5 rounded-xl bg-navy-850 border border-slate-700/80 flex flex-col space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span id="timelineSummaryLabel" class="text-[10px] text-slate-400 font-mono uppercase tracking-wider flex items-center space-x-1.5">
+                <i data-lucide="calendar-clock" class="w-3.5 h-3.5 text-accent-green"></i>
+                <span>Sequential Ad Placement Timelines:</span>
+              </span>
+              <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-mono font-semibold border border-emerald-500/20">
+                Non-Overlapping Slots
+              </span>
+            </div>
+            <div id="timelineSummaryText" class="text-base font-bold font-mono text-accent-green tracking-wide">
+              No intervals yet
+            </div>
+            <span class="text-[11px] text-slate-400 font-sans">
+              Distinct sequential ad slots partitioned across video runtime (e.g. 1:00 - 1:03, then beyond or before).
+            </span>
+          </div>
+
+          <!-- Candidate List -->
+          <div id="candidatesList" class="flex-1 overflow-y-auto space-y-3 pr-1 max-h-[580px]">
+            <!-- Injected via JavaScript -->
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Presentation Pipeline Flow Modal (To show Ma'am) -->
+  <div id="pipelineModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+    <div class="glass-panel border border-slate-700/80 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 flex flex-col space-y-6 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-accent-cyan/10 border border-accent-cyan/30 flex items-center justify-center text-accent-cyan">
+            <i data-lucide="git-fork" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-base sm:text-lg font-bold text-white">System Architecture & Technical Processing Flow</h3>
+            <p class="text-xs text-slate-400">Complete end-to-end pipeline explanation from video upload to ad placement</p>
+          </div>
+        </div>
+        <button onclick="closePipelineModal()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white transition">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Producer-Consumer Parallel Streaming Architecture Diagram -->
+      <div class="mb-4 p-4 rounded-xl bg-navy-950 border border-accent-cyan/30 flex flex-col space-y-3 font-mono text-xs">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+          <span class="text-accent-cyan font-bold flex items-center space-x-2">
+            <span class="w-2 h-2 rounded-full bg-accent-cyan animate-pulse"></span>
+            <span>PRODUCER-CONSUMER PARALLEL STREAMING ARCHITECTURE</span>
+          </span>
+          <span class="text-[10px] text-slate-400">Zero Disk Bottleneck • Real-Time Decoupled Pipeline</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 text-center text-[11px]">
+          <div class="p-2.5 rounded-lg bg-navy-900 border border-slate-700/80 flex flex-col justify-center">
+            <span class="text-slate-400 text-[10px] uppercase">Input Stream</span>
+            <span class="text-white font-bold">MP4 Video</span>
+            <span class="text-accent-cyan text-[10px] mt-1">H.264 Demuxing</span>
+          </div>
+          <div class="p-2.5 rounded-lg bg-cyan-950/40 border border-cyan-800/80 flex flex-col justify-center">
+            <span class="text-cyan-400 text-[10px] uppercase">Worker A (Producer)</span>
+            <span class="text-white font-bold">ThreadedFrameReader</span>
+            <span class="text-cyan-300 text-[10px] mt-1">Decodes to RAM Queue (48 frames)</span>
+          </div>
+          <div class="p-2.5 rounded-lg bg-purple-950/40 border border-purple-800/80 flex flex-col justify-center">
+            <span class="text-purple-400 text-[10px] uppercase">Worker B &amp; C (Consumer)</span>
+            <span class="text-white font-bold">Neural / OCR Quads &amp; Tracker</span>
+            <span class="text-purple-300 text-[10px] mt-1">YOLOv8 + 3D Mesh in Parallel</span>
+          </div>
+          <div class="p-2.5 rounded-lg bg-emerald-950/40 border border-emerald-800/80 flex flex-col justify-center">
+            <span class="text-emerald-400 text-[10px] uppercase">Post-Stream Optimizer</span>
+            <span class="text-white font-bold">Co-Spatial Merge &amp; Scoring</span>
+            <span class="text-emerald-300 text-[10px] mt-1">1 Billboard Placement (30.4s)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6-Stage Interactive Workflow Stepper -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+        
+        <!-- Step 1 -->
+        <div id="modalStage1" class="p-4 rounded-xl bg-navy-900 border border-slate-800 transition-all duration-300 flex flex-col space-y-2">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2 text-accent-cyan font-bold">
+              <span class="w-5 h-5 rounded-md bg-accent-cyan/20 flex items-center justify-center font-mono">1</span>
+              <span>Video Ingestion &amp; Codec Demuxing</span>
+            </div>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-accent-cyan/10 text-accent-cyan border border-accent-cyan/30">Input Phase</span>
+          </div>
+          <p class="text-slate-300 leading-relaxed">
+            The video is streamed to the server and decoded using OpenCV <code class="text-accent-cyan font-mono">cv2.VideoCapture</code> at native FPS. Frame dimensions and metadata are normalized, and the output is converted to universal H.264 (<code class="text-accent-cyan font-mono">yuv420p</code>) for seamless HTML5 browser playback.
+          </p>
+          <div class="p-2 rounded bg-navy-950 border border-slate-800 font-mono text-[10px] text-slate-400">
+            <span class="text-accent-cyan">Flow:</span> Raw MP4/MOV &rarr; OpenCV Stream &rarr; Browser H.264
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div id="modalStage2" class="p-4 rounded-xl bg-navy-900 border border-slate-800 transition-all duration-300 flex flex-col space-y-2">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2 text-emerald-400 font-bold">
+              <span class="w-5 h-5 rounded-md bg-emerald-500/20 flex items-center justify-center font-mono">2</span>
+              <span>Worker A: Asynchronous Frame Extractor [Producer]</span>
+            </div>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">Parallel Producer</span>
+          </div>
+          <p class="text-slate-300 leading-relaxed">
+            Dedicated background thread continuously decodes frames into a prefetch RAM queue without writing raw images to disk. Uses adaptive keyframe striding (<code class="text-emerald-400 font-mono">stride = 3</code>), overlapping frame extraction 100% with downstream neural inference.
+          </p>
+          <div class="p-2 rounded bg-navy-950 border border-slate-800 font-mono text-[10px] text-slate-400">
+            <span class="text-emerald-400">Flow:</span> Producer Thread &rarr; Thread-Safe RAM Buffer (48 frames) &rarr; Zero Disk IO
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div id="modalStage3" class="p-4 rounded-xl bg-navy-900 border border-slate-800 transition-all duration-300 flex flex-col space-y-2">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2 text-purple-400 font-bold">
+              <span class="w-5 h-5 rounded-md bg-purple-500/20 flex items-center justify-center font-mono">3</span>
+              <span>Worker B: Neural &amp; OCR Surface Quad Detector [Consumer]</span>
+            </div>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/30">Parallel Consumer</span>
+          </div>
+          <p class="text-slate-300 leading-relaxed">
+            Consumes decoded frames from the queue concurrently in parallel. YOLOv8 open-vocabulary &amp; OCR/text boundary models locate planar candidate surfaces (<code class="text-purple-300 font-mono">billboard, sign, wall, transit bus/car flank</code>) and fit projectively perspective 3D quads <code class="text-purple-300 font-mono">P1(TL), P2(TR), P3(BR), P4(BL)</code>.
+          </p>
+          <div class="p-2 rounded bg-navy-950 border border-slate-800 font-mono text-[10px] text-slate-400">
+            <span class="text-purple-400">Flow:</span> Stream Queue &rarr; Parallel Neural/OCR Inference &rarr; 3D Planar Quad Mesh
+          </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div id="modalStage4" class="p-4 rounded-xl bg-navy-900 border border-slate-800 transition-all duration-300 flex flex-col space-y-2">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2 text-rose-400 font-bold">
+              <span class="w-5 h-5 rounded-md bg-rose-500/20 flex items-center justify-center font-mono">4</span>
+              <span>Worker C: Continuous Spatial Tracker &amp; Occlusion Reasoner</span>
+            </div>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-rose-500/10 text-rose-400 border border-rose-500/30">Tracking Stream</span>
+          </div>
+          <p class="text-slate-300 leading-relaxed">
+            Tracks candidate surfaces across frames in lockstep. Features spatial re-identification memory (120-frame window) and 55-frame smooth coasting to prevent momentary dropouts, while subtracting dynamic occluder masks (pedestrians, vehicles).
+          </p>
+          <div class="p-2 rounded bg-navy-950 border border-slate-800 font-mono text-[10px] text-slate-400">
+            <span class="text-rose-400">Flow:</span> Centroid IoU &rarr; Re-ID Memory Revive &rarr; Smooth Coasting &rarr; Occlusion Mask
+          </div>
+        </div>
+
+        <!-- Step 5 -->
+        <div id="modalStage5" class="p-4 rounded-xl bg-navy-900 border border-slate-800 transition-all duration-300 flex flex-col space-y-2">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2 text-amber-400 font-bold">
+              <span class="w-5 h-5 rounded-md bg-amber-500/20 flex items-center justify-center font-mono">5</span>
+              <span>Co-Spatial Billboard Consolidation &amp; Disjoint Slots</span>
+            </div>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/30">Optimizer Phase</span>
+          </div>
+          <p class="text-slate-300 leading-relaxed">
+            Post-stream consolidation algorithm compares all tracklets pairwise: surfaces occupying the same physical screen space are merged into <strong>ONE single continuous placement</strong> spanning the full video, followed by disjoint non-overlapping timeline slot partitioning.
+          </p>
+          <div class="p-2 rounded bg-navy-950 border border-slate-800 font-mono text-[10px] text-slate-400">
+            <span class="text-amber-400">Flow:</span> Fragmented Tracklets &rarr; Co-Spatial Merge &rarr; Unified Placement &rarr; Non-Overlap Slots
+          </div>
+        </div>
+
+        <!-- Step 6 -->
+        <div id="modalStage6" class="p-4 rounded-xl bg-navy-900 border border-slate-800 transition-all duration-300 flex flex-col space-y-2">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2 text-accent-green font-bold">
+              <span class="w-5 h-5 rounded-md bg-accent-green/20 flex items-center justify-center font-mono">6</span>
+              <span>Multi-Factor Ranking &amp; 3D Ad Placement</span>
+            </div>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-accent-green/10 text-accent-green border border-accent-green/30">Output Phase</span>
+          </div>
+          <p class="text-slate-300 leading-relaxed">
+            Multi-factor ScoreEngine evaluates duration, canvas area, occlusion resistance, jitter stability, and geometry. The optimal Rank #1 space is highlighted with a neon green 3D selected ad square with orientation triad and depth badges, exported to CSV &amp; JSON.
+          </p>
+          <div class="p-2 rounded bg-navy-950 border border-slate-800 font-mono text-[10px] text-slate-400">
+            <span class="text-accent-green">Flow:</span> Score Formulation S &rarr; Rank 1 Placement &rarr; 3D Neon Target Square (P1-P4)
+          </div>
+        </div>
+
+      </div>
+
+      <div class="p-4 rounded-xl bg-navy-850 border border-slate-800 flex items-center justify-between text-xs font-mono text-slate-400">
+        <span>Scoring Formulation: S = w_dur·S_dur + w_area·S_area + w_occ·S_occ + w_stab·S_stab + w_geom·S_geom</span>
+        <button onclick="closePipelineModal()" class="px-4 py-2 rounded-lg bg-accent-green text-black font-bold hover:bg-emerald-400 transition">
+          Close Guide
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentMode = "video"; // "video" or "photo"
+    let selectedFile = null;
+    let currentResultData = null;
+    let activeMediaMode = "annotated"; // "annotated" or "raw"
+
+    document.addEventListener("DOMContentLoaded", () => {
+      lucide.createIcons();
+      setupDropzone();
+    });
+
+    function openPipelineModal() {
+      document.getElementById("pipelineModal").classList.remove("hidden");
+    }
+
+    function closePipelineModal() {
+      document.getElementById("pipelineModal").classList.add("hidden");
+    }
+
+    function openStageModal(stageNum) {
+      openPipelineModal();
+      setTimeout(() => {
+        const el = document.getElementById(`modalStage${stageNum}`);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          el.classList.add("ring-2", "ring-accent-green", "border-accent-green");
+          setTimeout(() => {
+            el.classList.remove("ring-2", "ring-accent-green", "border-accent-green");
+          }, 2500);
+        }
+      }, 120);
+    }
+
+    function setFlowStepState(stepNum, state, metaText = null) {
+      const card = document.getElementById(`flowCard${stepNum}`);
+      const num = document.getElementById(`flowNum${stepNum}`);
+      const pill = document.getElementById(`flowPill${stepNum}`);
+      const iconBox = document.getElementById(`flowIconBox${stepNum}`);
+      const title = document.getElementById(`flowTitle${stepNum}`);
+      const meta = document.getElementById(`flowMeta${stepNum}`);
+
+      if (!card) return;
+
+      if (metaText !== null) {
+        meta.textContent = metaText;
+      }
+
+      if (state === "standby") {
+        card.className = "p-3.5 rounded-xl border border-slate-800 bg-navy-900/80 transition-all duration-300 cursor-pointer hover:border-slate-600 flex flex-col justify-between relative group";
+        num.className = "w-5 h-5 rounded-md bg-slate-800 text-slate-400 font-mono font-bold text-[11px] flex items-center justify-center";
+        pill.className = "text-[9px] px-1.5 py-0.5 rounded font-mono font-bold uppercase tracking-wider bg-slate-800 text-slate-400 border border-slate-700";
+        pill.textContent = "STANDBY";
+        iconBox.className = "w-8 h-8 rounded-lg bg-slate-800/80 text-slate-400 flex items-center justify-center shrink-0";
+        title.className = "text-xs font-bold text-slate-300 truncate";
+        meta.className = "text-slate-400 truncate";
+      } else if (state === "parallel" || state === "active") {
+        card.className = "p-3.5 rounded-xl border border-accent-cyan bg-navy-850 transition-all duration-300 cursor-pointer shadow-lg shadow-accent-cyan/20 ring-1 ring-accent-cyan flex flex-col justify-between relative group";
+        num.className = "w-5 h-5 rounded-md bg-accent-cyan text-black font-mono font-bold text-[11px] flex items-center justify-center animate-pulse";
+        pill.className = "text-[9px] px-1.5 py-0.5 rounded font-mono font-bold uppercase tracking-wider bg-accent-cyan/20 text-accent-cyan border border-accent-cyan/40 animate-pulse";
+        pill.textContent = state === "parallel" ? "PARALLEL ⚡" : "RUNNING...";
+        iconBox.className = "w-8 h-8 rounded-lg bg-accent-cyan/20 text-accent-cyan flex items-center justify-center shrink-0 animate-bounce";
+        title.className = "text-xs font-bold text-accent-cyan truncate";
+        meta.className = "text-accent-cyan font-semibold truncate";
+      } else if (state === "completed") {
+        card.className = "p-3.5 rounded-xl border border-accent-green/60 bg-emerald-950/20 transition-all duration-300 cursor-pointer hover:border-accent-green flex flex-col justify-between relative group glow-green";
+        num.className = "w-5 h-5 rounded-md bg-accent-green text-black font-mono font-bold text-[11px] flex items-center justify-center";
+        pill.className = "text-[9px] px-1.5 py-0.5 rounded font-mono font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-400 border border-emerald-500/40";
+        pill.textContent = "DONE ✓";
+        iconBox.className = "w-8 h-8 rounded-lg bg-emerald-500/20 text-accent-green flex items-center justify-center shrink-0";
+        title.className = "text-xs font-bold text-white truncate";
+        meta.className = "text-accent-green font-medium truncate";
+      }
+    }
+
+    function setPipelineGlobalStatus(statusText, state = "standby") {
+      const badge = document.getElementById("pipelineGlobalBadge");
+      const dot = document.getElementById("pipelineGlobalDot");
+      const status = document.getElementById("pipelineGlobalStatus");
+      if (!badge || !dot || !status) return;
+
+      status.textContent = statusText;
+      if (state === "standby") {
+        badge.className = "px-3 py-1.5 rounded-lg text-xs font-mono font-semibold bg-navy-900 border border-slate-700/80 flex items-center space-x-2 text-slate-300";
+        dot.className = "w-2 h-2 rounded-full bg-slate-500";
+      } else if (state === "active") {
+        badge.className = "px-3 py-1.5 rounded-lg text-xs font-mono font-semibold bg-accent-cyan/10 border border-accent-cyan/40 flex items-center space-x-2 text-accent-cyan";
+        dot.className = "w-2 h-2 rounded-full bg-accent-cyan animate-ping";
+      } else if (state === "completed") {
+        badge.className = "px-3 py-1.5 rounded-lg text-xs font-mono font-semibold bg-emerald-500/10 border border-emerald-500/40 flex items-center space-x-2 text-accent-green";
+        dot.className = "w-2 h-2 rounded-full bg-accent-green animate-pulse";
+      }
+    }
+
+    function getStepLabel(i) {
+      switch (i) {
+        case 1: return "1. Ingestion & Codec Demuxing";
+        case 2: return "Worker A: Frame Extraction Stream [Producer]";
+        case 3: return "Worker B: Neural & OCR Surface Quads [Consumer]";
+        case 4: return "Worker C: Continuous Spatial Tracker [Consumer]";
+        case 5: return "5. Co-Spatial Tracklet Consolidation & Disjoint Slots";
+        case 6: return "6. Optimal 3D Ad Space Square Placement";
+        default: return "";
+      }
+    }
+
+    function updateLiveSteps(activeInput) {
+      const activeSet = new Set(Array.isArray(activeInput) ? activeInput : [activeInput]);
+      const maxActive = Array.isArray(activeInput) ? Math.max(...activeInput) : activeInput;
+      const minActive = Array.isArray(activeInput) ? Math.min(...activeInput) : activeInput;
+
+      for (let i = 1; i <= 6; i++) {
+        const el = document.getElementById(`liveStep${i}`);
+        if (!el) continue;
+        if (activeSet.has(i)) {
+          el.className = "flex items-center space-x-1.5 text-accent-cyan font-semibold animate-pulse";
+          el.innerHTML = `<i data-lucide="loader" class="w-3.5 h-3.5 animate-spin"></i><span>${getStepLabel(i)}</span> <span class="text-[9px] px-1.5 py-0.2 rounded font-mono bg-accent-cyan/20 text-accent-cyan border border-accent-cyan/40 uppercase">Active</span>`;
+        } else if (i < minActive || maxActive > 6) {
+          el.className = "flex items-center space-x-1.5 text-accent-green font-semibold";
+          el.innerHTML = `<i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i><span>${getStepLabel(i)}</span>`;
+        } else {
+          el.className = "flex items-center space-x-1.5 text-slate-500";
+          el.innerHTML = `<i data-lucide="circle" class="w-3.5 h-3.5"></i><span>${getStepLabel(i)}</span>`;
+        }
+      }
+      lucide.createIcons();
+    }
+
+    function setAnalysisMode(mode) {
+      currentMode = mode;
+      selectedFile = null;
+      document.getElementById("selectedFileBar").classList.add("hidden");
+      document.getElementById("mediaFileInput").value = "";
+
+      const btnVid = document.getElementById("tabVideoMode");
+      const btnPho = document.getElementById("tabPhotoMode");
+      const fileInput = document.getElementById("mediaFileInput");
+      const modeIcon = document.getElementById("modeIcon");
+      const modeTitle = document.getElementById("modeTitle");
+      const modeSubtitle = document.getElementById("modeSubtitle");
+      const dropzoneFormats = document.getElementById("dropzoneFormats");
+      const btnStartText = document.getElementById("btnStartText");
+
+      if (mode === "video") {
+        btnVid.className = "px-5 py-2 rounded-lg text-xs font-bold transition flex items-center space-x-2 bg-accent-green text-black shadow-md";
+        btnPho.className = "px-5 py-2 rounded-lg text-xs font-bold transition flex items-center space-x-2 text-slate-400 hover:text-white";
+        fileInput.accept = "video/*";
+        modeIcon.setAttribute("data-lucide", "video");
+        modeTitle.textContent = "Upload Video for In-Scene Ad Space Extraction";
+        modeSubtitle.textContent = "Select or drop any video clip. The pipeline extracts frames in real-time, detects candidate planar surfaces, tracks them with homography, and partitions sequential ad slots across the timeline.";
+        dropzoneFormats.textContent = "Supports MP4, MOV, AVI, MKV, WebM";
+        btnStartText.textContent = "Analyze Video";
+
+        // Update pipeline step labels for video
+        document.getElementById("flowTitle1").textContent = "1. Ingestion";
+        document.getElementById("flowMeta1").textContent = "OpenCV H.264";
+        document.getElementById("flowTitle2").textContent = "2. Frame Extract";
+        document.getElementById("flowMeta2").textContent = "Subsampling 18 FPS";
+        document.getElementById("flowTitle3").textContent = "3. Quad Detection";
+        document.getElementById("flowMeta3").textContent = "Quads P1-P4 (<2ms)";
+        document.getElementById("flowTitle4").textContent = "4. Tracking & Occl";
+        document.getElementById("flowMeta4").textContent = "Centroid IoU + Mask";
+        document.getElementById("flowTitle5").textContent = "5. Disjoint Slots";
+        document.getElementById("flowMeta5").textContent = "Beyond / Before Slots";
+        document.getElementById("flowTitle6").textContent = "6. Ad Placement";
+        document.getElementById("flowMeta6").textContent = "Neon Square Overlay";
+      } else {
+        btnPho.className = "px-5 py-2 rounded-lg text-xs font-bold transition flex items-center space-x-2 bg-accent-cyan text-black shadow-md";
+        btnVid.className = "px-5 py-2 rounded-lg text-xs font-bold transition flex items-center space-x-2 text-slate-400 hover:text-white";
+        fileInput.accept = "image/*";
+        modeIcon.setAttribute("data-lucide", "image");
+        modeTitle.textContent = "Upload Photo for In-Scene Ad Space Extraction";
+        modeSubtitle.textContent = "Select or drop any still photo. The pipeline will detect planar surfaces (billboards, banners, walls, storefronts, signage), compute homography and occlusion, and highlight optimal ad squares.";
+        dropzoneFormats.textContent = "Supports JPG, JPEG, PNG, WEBP, BMP";
+        btnStartText.textContent = "Analyze Photo";
+
+        // Update pipeline step labels for photo
+        document.getElementById("flowTitle1").textContent = "1. Ingestion";
+        document.getElementById("flowMeta1").textContent = "Photo Normalization";
+        document.getElementById("flowTitle2").textContent = "2. Preprocessing";
+        document.getElementById("flowMeta2").textContent = "Single High-Res Frame";
+        document.getElementById("flowTitle3").textContent = "3. Quad Detection";
+        document.getElementById("flowMeta3").textContent = "Wall/Sign Quads P1-P4";
+        document.getElementById("flowTitle4").textContent = "4. Perspective Geom";
+        document.getElementById("flowMeta4").textContent = "Corner Rectilinearity";
+        document.getElementById("flowTitle5").textContent = "5. Occlusion Mask";
+        document.getElementById("flowMeta5").textContent = "Foreground Segment";
+        document.getElementById("flowTitle6").textContent = "6. Ad Placement";
+        document.getElementById("flowMeta6").textContent = "Selected Target Square";
+      }
+      setPipelineGlobalStatus("Pipeline Standby", "standby");
+      for (let i = 1; i <= 6; i++) setFlowStepState(i, "standby");
+      lucide.createIcons();
+    }
+
+    function triggerFileInput() {
+      document.getElementById("mediaFileInput").click();
+    }
+
+    function setupDropzone() {
+      const dropzone = document.getElementById("dropzone");
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dropzone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropzone.classList.add("border-accent-green");
+        }, false);
+      });
+
+      ['dragleave', 'drop'].forEach(eventName => {
+        dropzone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropzone.classList.remove("border-accent-green");
+        }, false);
+      });
+
+      dropzone.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        if (files.length > 0) {
+          handleFile(files[0]);
+        }
+      }, false);
+    }
+
+    function handleFileSelect(e) {
+      if (e.target.files && e.target.files.length > 0) {
+        handleFile(e.target.files[0]);
+      }
+    }
+
+    function handleFile(file) {
+      selectedFile = file;
+      document.getElementById("selectedFileName").textContent = file.name;
+      document.getElementById("selectedFileSize").textContent = (file.size / (1024 * 1024)).toFixed(2) + " MB";
+      
+      const icon = document.getElementById("selectedFileIcon");
+      if (currentMode === "video") {
+        icon.setAttribute("data-lucide", "file-video");
+      } else {
+        icon.setAttribute("data-lucide", "file-image");
+      }
+      lucide.createIcons();
+
+      document.getElementById("selectedFileBar").classList.remove("hidden");
+    }
+
+    async function startAnalysis() {
+      if (!selectedFile) return;
+
+      if (currentMode === "video") {
+        await startVideoAnalysis();
+      } else {
+        await startPhotoAnalysis();
+      }
+    }
+
+    async function startVideoAnalysis() {
+      document.getElementById("selectedFileBar").classList.add("hidden");
+      document.getElementById("dropzone").classList.add("hidden");
+      document.getElementById("processingLoader").classList.remove("hidden");
+
+      document.getElementById("livePercentVal").textContent = "0.0%";
+      document.getElementById("liveProgressBar").style.width = "0%";
+      document.getElementById("liveProgressFraction").textContent = "Initializing stream...";
+      document.getElementById("liveElapsedTimer").textContent = "00:00.0s";
+      document.getElementById("liveFpsVal").textContent = "0.0 FPS";
+      document.getElementById("liveTimestamp").textContent = "00:00.0s";
+      document.getElementById("liveActiveSurfaces").textContent = "0 Detected";
+
+      // Initialize Pipeline Stepper Flow
+      setPipelineGlobalStatus("Processing: Video Ingestion & Codec Demuxing...", "active");
+      setFlowStepState(1, "active", "Demuxing Video Stream");
+      for (let i = 2; i <= 6; i++) setFlowStepState(i, "standby");
+      updateLiveSteps(1);
+
+      const formData = new FormData();
+      formData.append("file", selectedFile);
+
+      try {
+        const res = await fetch("/api/start_analysis", {
+          method: "POST",
+          body: formData
+        });
+
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.detail || "Server error while starting video analysis.");
+        }
+
+        const { job_id } = await res.json();
+
+        const pollInterval = setInterval(async () => {
+          try {
+            const pRes = await fetch(`/api/job_progress/${job_id}`);
+            if (!pRes.ok) return;
+
+            const pData = await pRes.json();
+            const pct = pData.percent || 0.0;
+            document.getElementById("livePercentVal").textContent = `${pct.toFixed(1)}%`;
+            document.getElementById("liveProgressBar").style.width = `${pct}%`;
+            document.getElementById("liveProgressFraction").textContent = `${pData.current_frame || 0} / ${pData.total_frames || 0} frames`;
+            
+            // Live processing time and speed
+            const elapsed = pData.elapsed_sec || 0.0;
+            document.getElementById("liveElapsedTimer").textContent = `${elapsed.toFixed(1)}s`;
+            document.getElementById("liveFpsVal").textContent = `${(pData.fps || 0.0).toFixed(1)} FPS`;
+
+            const sec = pData.timestamp_sec || 0.0;
+            const minStr = Math.floor(sec / 60).toString().padStart(2, '0');
+            const secStr = (sec % 60).toFixed(1).padStart(4, '0');
+            document.getElementById("liveTimestamp").textContent = `${minStr}:${secStr}s`;
+            document.getElementById("liveActiveSurfaces").textContent = `${pData.active_surfaces || 0} Candidate(s)`;
+
+            // Live Concurrent Parallel Pipeline Stepper updates:
+            // Stages 2, 3, and 4 stream concurrently in parallel!
+            if (pct < 99) {
+              setPipelineGlobalStatus(`Parallel Stream: Frame Extraction & Neural / OCR Detection (${pct.toFixed(0)}%)`, "active");
+              setFlowStepState(1, "completed", "Demuxed & Buffer Ready");
+              
+              // Worker A: Frame Extraction Stream (Producer)
+              setFlowStepState(2, "parallel", `${pData.current_frame || 0}/${pData.total_frames || 0} frames @ ${(pData.fps || 0.0).toFixed(1)} FPS`);
+              
+              // Worker B: Neural Surface & OCR Quads (Consumer)
+              const cycles = Math.floor((pData.current_frame || 0) / 3) + 1;
+              setFlowStepState(3, "parallel", `Active | ${cycles} cycles (${pData.active_surfaces || 0} quads verified)`);
+              
+              // Worker C: Continuous Trajectory Tracker (Consumer)
+              setFlowStepState(4, "parallel", `Tracking in parallel (${pData.active_surfaces || 0} active surfaces)`);
+              
+              // Phase 5 & 6 are awaiting stream completion
+              setFlowStepState(5, "standby", "Awaiting Stream Completion");
+              setFlowStepState(6, "standby", "Standby");
+              
+              updateLiveSteps([2, 3, 4]); // Concurrently pulses workers 2, 3, 4
+            } else {
+              setPipelineGlobalStatus(`Stage 5/6: Consolidating Billboard Tracklets & Scoring (${pct.toFixed(0)}%)`, "active");
+              setFlowStepState(1, "completed", "Demuxed Successfully");
+              setFlowStepState(2, "completed", `${pData.total_frames || pData.current_frame} frames decoded`);
+              setFlowStepState(3, "completed", "Quads & OCR extracted");
+              setFlowStepState(4, "completed", "Trajectories tracked & coasted");
+              setFlowStepState(5, "active", "Consolidating billboard tracklets & timeline slots");
+              setFlowStepState(6, "standby", "Standby");
+              updateLiveSteps(5);
+            }
+
+            // Live preview frame updating
+            if (pData.preview_frame) {
+              const previewImg = document.getElementById("liveFramePreview");
+              previewImg.src = pData.preview_frame;
+              document.getElementById("livePreviewPlaceholder").classList.add("hidden");
+              document.getElementById("livePreviewFrameNum").textContent = `Frame #${pData.current_frame || 0} (${pData.timestamp_sec || 0}s)`;
+            }
+
+            if (pData.status === "completed") {
+              clearInterval(pollInterval);
+              document.getElementById("processingLoader").classList.add("hidden");
+              currentResultData = pData.result;
+              renderVideoResults(currentResultData);
+            } else if (pData.status === "failed") {
+              clearInterval(pollInterval);
+              document.getElementById("processingLoader").classList.add("hidden");
+              alert("Video analysis failed: " + (pData.error || "Unknown error"));
+              resetToUpload();
+            }
+          } catch (pollErr) {
+            console.error("Progress polling error:", pollErr);
+          }
+        }, 150);
+
+      } catch (err) {
+        alert("Video upload failed: " + err.message);
+        document.getElementById("processingLoader").classList.add("hidden");
+        resetToUpload();
+      }
+    }
+
+    async function startPhotoAnalysis() {
+      document.getElementById("selectedFileBar").classList.add("hidden");
+      document.getElementById("dropzone").classList.add("hidden");
+      document.getElementById("photoProcessingLoader").classList.remove("hidden");
+
+      // Initialize Pipeline Stepper Flow for Photo
+      setPipelineGlobalStatus("Processing: Photo Planar Surface Detection...", "active");
+      setFlowStepState(1, "active", "Ingesting photo");
+      for (let i = 2; i <= 6; i++) setFlowStepState(i, "standby");
+      updateLiveSteps(1);
+
+      const formData = new FormData();
+      formData.append("file", selectedFile);
+
+      try {
+        const res = await fetch("/api/analyze_photo", {
+          method: "POST",
+          body: formData
+        });
+
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.detail || "Server error while analyzing photo.");
+        }
+
+        const data = await res.json();
+        document.getElementById("photoProcessingLoader").classList.add("hidden");
+        currentResultData = data;
+        renderPhotoResults(data);
+
+      } catch (err) {
+        alert("Photo analysis failed: " + err.message);
+        document.getElementById("photoProcessingLoader").classList.add("hidden");
+        resetToUpload();
+      }
+    }
+
+    function formatTimeline(startSec, endSec) {
+      const toMss = (s) => {
+        const total = Math.max(0, Math.floor(s));
+        const mins = Math.floor(total / 60);
+        const secs = total % 60;
+        return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+      };
+      return `${toMss(startSec)} - ${toMss(endSec)}`;
+    }
+
+    function renderVideoResults(data) {
+      document.getElementById("uploadSection").classList.add("hidden");
+      document.getElementById("resultsSection").classList.remove("hidden");
+
+      // Update Parallel Pipeline Flow Stepper with full verified results
+      setPipelineGlobalStatus(`Pipeline Execution Complete (${data.total_processing_time_sec !== undefined ? data.total_processing_time_sec + 's' : 'Done'})`, "completed");
+      setFlowStepState(1, "completed", `Demuxed (${data.video_duration_sec || 0}s duration)`);
+      setFlowStepState(2, "completed", `${data.total_frames_extracted || 0} frames @ ${data.processing_fps || 0} FPS`);
+      setFlowStepState(3, "completed", "Parallel Quads & OCR Verified");
+      setFlowStepState(4, "completed", "Coasted & Re-Identified");
+      setFlowStepState(5, "completed", data.sequential_timeline_summary || "Co-Spatial Consolidated");
+      setFlowStepState(6, "completed", "Rank #1 Target Square Placed");
+      updateLiveSteps(7);
+
+      // Configure Viewport for Video
+      document.getElementById("resultsVideoPlayer").classList.remove("hidden");
+      document.getElementById("resultsPhotoPlayer").classList.add("hidden");
+      document.getElementById("mediaTypeIcon").setAttribute("data-lucide", "video");
+      document.getElementById("currentMediaLabel").textContent = data.filename || "Uploaded Video";
+      document.getElementById("btnUploadNewText").textContent = "Upload New Video";
+
+      // Configure Performance Benchmark Strip
+      document.getElementById("statProcTime").textContent = (data.total_processing_time_sec !== undefined ? `${data.total_processing_time_sec}s` : "--");
+      document.getElementById("statProcFps").textContent = (data.processing_fps !== undefined ? `${data.processing_fps} FPS` : "--");
+      document.getElementById("statTotalFrames").textContent = (data.total_frames_extracted !== undefined ? `${data.total_frames_extracted} frames` : "--");
+      document.getElementById("statSpeedup").textContent = (data.speedup_factor !== undefined ? `${data.speedup_factor}x Real-Time` : "--");
+
+      // Configure Inspector Labels for Video
+      document.getElementById("m1Label").textContent = "⏱ Screen Time";
+      document.getElementById("m4Label").textContent = "📈 Stability";
+      document.getElementById("candidateHelpText").textContent = "Click any candidate below to jump to that timestamp in the video:";
+
+      const player = document.getElementById("resultsVideoPlayer");
+      const videoUrl = (activeMediaMode === "annotated" && data.annotated_video_url)
+        ? data.annotated_video_url
+        : data.raw_video_url;
+
+      player.pause();
+      player.src = videoUrl + "?v=" + Date.now();
+      player.load();
+      player.play().catch(e => console.log("Playback deferred:", e));
+
+      // Exports links
+      document.getElementById("btnCsv").href = data.csv_export_url || "#";
+      document.getElementById("btnJson").href = data.json_export_url || "#";
+
+      const placements = data.placements || [];
+      document.getElementById("statCount").textContent = placements.length;
+      document.getElementById("badgeCandidateCount").textContent = `${placements.length} Placement${placements.length !== 1 ? 's' : ''}`;
+
+      // Update Master Sequential Timeline Summary Box (e.g., 1:00 - 1:03 , 1:04 - 1:07)
+      document.getElementById("timelineSummaryLabel").innerHTML = `
+        <i data-lucide="calendar-clock" class="w-3.5 h-3.5 text-accent-green"></i>
+        <span>Sequential Ad Placement Timelines:</span>
+      `;
+      
+      const summaryText = data.sequential_timeline_summary || placements.map(p => p.timeline_slot_str || formatTimeline(p.start_time_sec, p.end_time_sec)).join(" , ");
+      document.getElementById("timelineSummaryText").textContent = summaryText || "No sequential intervals detected";
+
+      const listContainer = document.getElementById("candidatesList");
+      listContainer.innerHTML = "";
+
+      if (placements.length === 0) {
+        listContainer.innerHTML = `
+          <div class="p-6 text-center text-xs text-slate-500 bg-navy-900 rounded-xl border border-slate-800">
+            No continuous planar ad surfaces with sufficient duration were detected in this clip.
+          </div>
+        `;
+        clearInspector();
+        lucide.createIcons();
+        return;
+      }
+
+      placements.forEach((p) => {
+        const isRank1 = (p.rank === 1);
+        const isSequential = (p.is_sequential_slot !== false);
+        const card = document.createElement("div");
+        card.className = `p-3.5 rounded-xl border transition cursor-pointer ${
+          isRank1 
+            ? "bg-emerald-950/20 border-accent-green/50 hover:border-accent-green glow-green" 
+            : "bg-navy-900 border-slate-800 hover:border-slate-700"
+        }`;
+
+        const slotStr = p.timeline_slot_str || formatTimeline(p.start_time_sec, p.end_time_sec);
+
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+              <span class="w-6 h-6 rounded-lg flex items-center justify-center font-mono font-bold text-xs ${
+                isRank1 ? "bg-accent-green text-black" : "bg-slate-800 text-slate-300"
+              }">#${p.rank}</span>
+              <span class="font-bold text-sm text-white">${p.class_name.toUpperCase()}</span>
+            </div>
+            <div class="flex items-center space-x-1 font-mono font-bold text-sm ${isRank1 ? "text-accent-green" : "text-slate-300"}">
+              <span>⭐ ${p.final_score.toFixed(1)}</span>
+            </div>
+          </div>
+
+          <!-- Highlighted Sequential Timeline Ribbon -->
+          <div class="mt-2.5 p-2 rounded-lg ${isSequential ? 'bg-emerald-950/40 border border-emerald-500/40' : 'bg-navy-850 border border-slate-700/60'} flex items-center justify-between font-mono text-xs">
+            <span class="flex items-center space-x-1.5 ${isSequential ? 'text-accent-green font-bold' : 'text-slate-300'}">
+              <i data-lucide="clock" class="w-3.5 h-3.5 ${isSequential ? 'text-accent-green' : 'text-slate-400'}"></i>
+              <span>${isSequential ? 'Ad Slot' : 'Interval'}: ${slotStr}</span>
+            </span>
+            <span class="text-slate-300 font-semibold">Dur: ${p.duration_sec}s</span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 mt-2 text-xs text-slate-400 font-mono">
+            <div>Canvas Area: <span class="text-slate-200">${p.mean_area_pct}%</span></div>
+            <div>Occlusion: <span class="${p.mean_occlusion_pct > 20 ? 'text-accent-rose' : 'text-slate-200'}">${p.mean_occlusion_pct}%</span></div>
+          </div>
+
+          <div class="mt-3 flex items-center justify-between pt-2 border-t border-slate-800/80">
+            <span class="text-[11px] ${isRank1 ? 'text-accent-green font-semibold' : (isSequential ? 'text-accent-cyan font-medium' : 'text-slate-400')}">
+              ${isRank1 ? '★ Selected Primary Ad Slot' : (isSequential ? '✓ Sequential Ad Slot' : '• Co-occurring Alternative')}
+            </span>
+            <button onclick="seekTo(${p.start_time_sec})" class="px-2.5 py-1 rounded-md text-xs font-semibold bg-slate-800 hover:bg-accent-green hover:text-black transition flex items-center space-x-1">
+              <span>▶ Jump to ${slotStr.split(' - ')[0]}</span>
+            </button>
+          </div>
+        `;
+
+        card.onclick = (e) => {
+          if (e.target.tagName !== "BUTTON") {
+            updateVideoInspector(p);
+          }
+        };
+
+        listContainer.appendChild(card);
+      });
+
+      lucide.createIcons();
+      updateVideoInspector(placements[0]);
+    }
+
+    function renderPhotoResults(data) {
+      document.getElementById("uploadSection").classList.add("hidden");
+      document.getElementById("resultsSection").classList.remove("hidden");
+
+      // Update Sequential Pipeline Flow Stepper for Photo
+      setPipelineGlobalStatus(`Pipeline Execution Complete (${data.total_processing_time_sec !== undefined ? data.total_processing_time_sec + 's' : 'Done'})`, "completed");
+      setFlowStepState(1, "completed", "Photo Ingested");
+      setFlowStepState(2, "completed", "Single Frame High-Res");
+      setFlowStepState(3, "completed", "Planar Surfaces (P1-P4)");
+      setFlowStepState(4, "completed", "Orthogonality Validated");
+      setFlowStepState(5, "completed", "Foreground Occlusion Filtered");
+      setFlowStepState(6, "completed", "Rank #1 Target Square Placed");
+      updateLiveSteps(6);
+
+      // Configure Viewport for Photo
+      document.getElementById("resultsVideoPlayer").classList.add("hidden");
+      const photoElem = document.getElementById("resultsPhotoPlayer");
+      photoElem.classList.remove("hidden");
+      document.getElementById("mediaTypeIcon").setAttribute("data-lucide", "image");
+      document.getElementById("currentMediaLabel").textContent = data.filename || "Uploaded Photo";
+      document.getElementById("btnUploadNewText").textContent = "Upload New Photo";
+
+      // Configure Performance Benchmark Strip for Photo
+      document.getElementById("statProcTime").textContent = (data.total_processing_time_sec !== undefined ? `${data.total_processing_time_sec}s` : "--");
+      document.getElementById("statProcFps").textContent = "Single Frame";
+      document.getElementById("statTotalFrames").textContent = "1 frame";
+      document.getElementById("statSpeedup").textContent = "Instant";
+
+      // Configure Inspector Labels for Photo
+      document.getElementById("m1Label").textContent = "📏 Dimensions";
+      document.getElementById("m4Label").textContent = "📍 Position (X,Y)";
+      document.getElementById("candidateHelpText").textContent = "Click any candidate below to inspect quad coordinates & metrics:";
+
+      // Photo Image Source
+      const imgUrl = (activeMediaMode === "annotated" && data.annotated_media_url)
+        ? data.annotated_media_url
+        : data.raw_media_url;
+      photoElem.src = imgUrl + "?v=" + Date.now();
+
+      // Exports links
+      document.getElementById("btnCsv").href = data.csv_export_url || "#";
+      document.getElementById("btnJson").href = data.json_export_url || "#";
+
+      const placements = data.placements || [];
+      document.getElementById("statCount").textContent = placements.length;
+      document.getElementById("badgeCandidateCount").textContent = `${placements.length} Placement${placements.length !== 1 ? 's' : ''}`;
+
+      // Update Summary Ribbon for Photo
+      document.getElementById("timelineSummaryLabel").innerHTML = `
+        <i data-lucide="crosshair" class="w-3.5 h-3.5 text-accent-green"></i>
+        <span>Detected Ad Placement Surfaces:</span>
+      `;
+      if (placements.length > 0) {
+        document.getElementById("timelineSummaryText").textContent = `Selected Optimal Square: ${placements[0].class_name.toUpperCase()} (${placements[0].dimensions_wh || ''} at ${placements[0].position_xy || ''})`;
+      } else {
+        document.getElementById("timelineSummaryText").textContent = "No planar ad surfaces detected in photo";
+      }
+
+      const listContainer = document.getElementById("candidatesList");
+      listContainer.innerHTML = "";
+
+      if (placements.length === 0) {
+        listContainer.innerHTML = `
+          <div class="p-6 text-center text-xs text-slate-500 bg-navy-900 rounded-xl border border-slate-800">
+            No planar surfaces suitable for ad placement were detected in this photo.
+          </div>
+        `;
+        clearInspector();
+        lucide.createIcons();
+        return;
+      }
+
+      placements.forEach((p) => {
+        const isRank1 = (p.rank === 1);
+        const card = document.createElement("div");
+        card.className = `p-3.5 rounded-xl border transition cursor-pointer ${
+          isRank1 
+            ? "bg-emerald-950/20 border-accent-green/50 hover:border-accent-green glow-green" 
+            : "bg-navy-900 border-slate-800 hover:border-slate-700"
+        }`;
+
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+              <span class="w-6 h-6 rounded-lg flex items-center justify-center font-mono font-bold text-xs ${
+                isRank1 ? "bg-accent-green text-black" : "bg-slate-800 text-slate-300"
+              }">#${p.rank}</span>
+              <span class="font-bold text-sm text-white">${p.class_name.toUpperCase()}</span>
+            </div>
+            <div class="flex items-center space-x-1 font-mono font-bold text-sm ${isRank1 ? "text-accent-green" : "text-slate-300"}">
+              <span>⭐ ${p.final_score.toFixed(1)}</span>
+            </div>
+          </div>
+
+          <!-- Highlighted Coordinate Ribbon -->
+          <div class="mt-2.5 p-2 rounded-lg bg-emerald-950/40 border border-emerald-500/40 flex items-center justify-between font-mono text-xs">
+            <span class="flex items-center space-x-1.5 text-accent-green font-bold">
+              <i data-lucide="map-pin" class="w-3.5 h-3.5 text-accent-green"></i>
+              <span>Pos: ${p.position_xy}</span>
+            </span>
+            <span class="text-slate-300 font-semibold">${p.dimensions_wh}</span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 mt-2 text-xs text-slate-400 font-mono">
+            <div>Canvas Area: <span class="text-slate-200">${p.mean_area_pct}%</span></div>
+            <div>Occlusion: <span class="${p.mean_occlusion_pct > 20 ? 'text-accent-rose' : 'text-slate-200'}">${p.mean_occlusion_pct}%</span></div>
+          </div>
+
+          <div class="mt-3 flex items-center justify-between pt-2 border-t border-slate-800/80">
+            <span class="text-[11px] ${p.is_recommended ? 'text-accent-green font-medium' : 'text-slate-400'}">
+              ${p.is_recommended ? '✓ Selected Placement Square' : '• Alternative Space'}
+            </span>
+            <span class="text-xs text-accent-cyan font-mono font-semibold">
+              Ortho Score: ${p.score_geometry}
+            </span>
+          </div>
+        `;
+
+        card.onclick = () => {
+          updatePhotoInspector(p);
+        };
+
+        listContainer.appendChild(card);
+      });
+
+      lucide.createIcons();
+      updatePhotoInspector(placements[0]);
+    }
+
+    function updateVideoInspector(p) {
+      if (!p) return;
+      document.getElementById("inspectorBadge").textContent = `Rank #${p.rank} (${p.class_name.toUpperCase()})`;
+      document.getElementById("scoreBanner").textContent = p.final_score.toFixed(1);
+      document.getElementById("auditText").textContent = p.audit_notes || "Continuous visibility across candidate duration.";
+
+      // Duration
+      document.getElementById("scoreDur").textContent = Math.round(p.score_duration);
+      document.getElementById("rawDur").textContent = `${p.duration_sec}s`;
+      document.getElementById("barDur").style.width = `${Math.min(100, p.score_duration)}%`;
+
+      // Area
+      document.getElementById("scoreArea").textContent = Math.round(p.score_area);
+      document.getElementById("rawArea").textContent = `${p.mean_area_pct}%`;
+      document.getElementById("barArea").style.width = `${Math.min(100, p.score_area)}%`;
+
+      // Occlusion
+      document.getElementById("scoreOcc").textContent = Math.round(p.score_occlusion);
+      document.getElementById("rawOcc").textContent = `${p.mean_occlusion_pct}%`;
+      document.getElementById("barOcc").style.width = `${Math.min(100, p.score_occlusion)}%`;
+
+      // Stability
+      document.getElementById("scoreStab").textContent = Math.round(p.score_stability);
+      document.getElementById("rawStab").textContent = `σ ${p.motion_jitter_px}px`;
+      document.getElementById("barStab").style.width = `${Math.min(100, p.score_stability)}%`;
+
+      // Geometry
+      document.getElementById("scoreGeom").textContent = Math.round(p.score_geometry);
+      document.getElementById("rawGeom").textContent = `${p.score_geometry.toFixed(1)}°`;
+      document.getElementById("barGeom").style.width = `${Math.min(100, p.score_geometry)}%`;
+    }
+
+    function updatePhotoInspector(p) {
+      if (!p) return;
+      document.getElementById("inspectorBadge").textContent = `Rank #${p.rank} (${p.class_name.toUpperCase()})`;
+      document.getElementById("scoreBanner").textContent = p.final_score.toFixed(1);
+      document.getElementById("auditText").textContent = p.audit_notes || "Static planar surface detected.";
+
+      // Dimensions (in place of duration)
+      document.getElementById("scoreDur").textContent = "SIZE";
+      document.getElementById("rawDur").textContent = p.dimensions_wh || "--";
+      document.getElementById("barDur").style.width = "100%";
+
+      // Area
+      document.getElementById("scoreArea").textContent = Math.round(p.score_area);
+      document.getElementById("rawArea").textContent = `${p.mean_area_pct}%`;
+      document.getElementById("barArea").style.width = `${Math.min(100, p.score_area)}%`;
+
+      // Occlusion
+      document.getElementById("scoreOcc").textContent = Math.round(p.score_occlusion);
+      document.getElementById("rawOcc").textContent = `${p.mean_occlusion_pct}%`;
+      document.getElementById("barOcc").style.width = `${Math.min(100, p.score_occlusion)}%`;
+
+      // Position (in place of stability)
+      document.getElementById("scoreStab").textContent = "POS";
+      document.getElementById("rawStab").textContent = p.position_xy || "--";
+      document.getElementById("barStab").style.width = "100%";
+
+      // Geometry
+      document.getElementById("scoreGeom").textContent = Math.round(p.score_geometry);
+      document.getElementById("rawGeom").textContent = `${p.score_geometry.toFixed(1)}°`;
+      document.getElementById("barGeom").style.width = `${Math.min(100, p.score_geometry)}%`;
+    }
+
+    function clearInspector() {
+      document.getElementById("inspectorBadge").textContent = "--";
+      document.getElementById("scoreBanner").textContent = "--";
+      document.getElementById("auditText").textContent = "No placement data available.";
+      ["Dur", "Area", "Occ", "Stab", "Geom"].forEach(f => {
+        document.getElementById(`score${f}`).textContent = "--";
+        document.getElementById(`raw${f}`).textContent = "--";
+        document.getElementById(`bar${f}`).style.width = "0%";
+      });
+    }
+
+    function seekTo(sec) {
+      const player = document.getElementById("resultsVideoPlayer");
+      player.currentTime = sec;
+      player.play().catch(e => console.log(e));
+    }
+
+    function switchMediaMode(mode) {
+      activeMediaMode = mode;
+      const btnAnn = document.getElementById("btnToggleAnnotated");
+      const btnRaw = document.getElementById("btnToggleRaw");
+
+      if (mode === "annotated") {
+        btnAnn.className = "px-2.5 py-1 rounded-md font-semibold transition bg-accent-green text-black";
+        btnRaw.className = "px-2.5 py-1 rounded-md font-medium text-slate-400 hover:text-white transition";
+      } else {
+        btnRaw.className = "px-2.5 py-1 rounded-md font-semibold transition bg-accent-cyan text-black";
+        btnAnn.className = "px-2.5 py-1 rounded-md font-medium text-slate-400 hover:text-white transition";
+      }
+
+      if (!currentResultData) return;
+
+      if (currentMode === "video") {
+        const player = document.getElementById("resultsVideoPlayer");
+        const t = player.currentTime;
+        const targetUrl = (mode === "annotated" && currentResultData.annotated_video_url)
+          ? currentResultData.annotated_video_url
+          : currentResultData.raw_video_url;
+        player.pause();
+        player.src = targetUrl + "?v=" + Date.now();
+        player.load();
+        player.currentTime = t;
+        player.play().catch(e => console.log(e));
+      } else {
+        const photoElem = document.getElementById("resultsPhotoPlayer");
+        const targetUrl = (mode === "annotated" && currentResultData.annotated_media_url)
+          ? currentResultData.annotated_media_url
+          : currentResultData.raw_media_url;
+        photoElem.src = targetUrl + "?v=" + Date.now();
+      }
+    }
+
+    function resetToUpload() {
+      selectedFile = null;
+      currentResultData = null;
+      document.getElementById("resultsSection").classList.add("hidden");
+      document.getElementById("uploadSection").classList.remove("hidden");
+      document.getElementById("selectedFileBar").classList.add("hidden");
+      document.getElementById("dropzone").classList.remove("hidden");
+      document.getElementById("mediaFileInput").value = "";
+
+      // Reset Pipeline Stepper to Standby
+      setPipelineGlobalStatus("Pipeline Standby", "standby");
+      for (let i = 1; i <= 6; i++) {
+        setFlowStepState(i, "standby");
+      }
+      updateLiveSteps(1);
+    }
+  </script>
+</body>
+</html>
